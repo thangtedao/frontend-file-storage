@@ -6,7 +6,7 @@ export const isAuthenticated = () => {
 
 export const register = async (data) => {
   try {
-    await apiClient.post("/auth/register", data);
+    await apiClient.post("/account/register", data);
   } catch (error) {
     throw error;
   }
@@ -14,7 +14,7 @@ export const register = async (data) => {
 
 export const login = async (username, password) => {
   try {
-    await apiClient.post("/auth/login", { username, password });
+    await apiClient.post("/account/login", { username, password });
   } catch (error) {
     throw error;
   }
@@ -22,7 +22,7 @@ export const login = async (username, password) => {
 
 export const logout = async () => {
   try {
-    await apiClient.post("/auth/logout");
+    await apiClient.get("/account/logout");
   } catch (error) {
     throw error;
   }
@@ -30,7 +30,9 @@ export const logout = async () => {
 
 export const getUser = async () => {
   try {
-    const response = await apiClient.get("/users/current");
+    const response = await apiClient.get("/account/current-user");
+    console.log(response);
+
     return response.data;
   } catch (error) {
     throw error;

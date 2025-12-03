@@ -6,7 +6,7 @@ import Button from "../components/Button";
 const LoginPage = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState([]);
+  const [errors, setErrors] = useState(null);
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
@@ -15,8 +15,8 @@ const LoginPage = () => {
       await login(username, password);
       return navigate("/");
     } catch (error) {
-      console.log(error);
-      setErrors(Object.entries(error.response?.data || {}));
+      console.log(error.response?.data?.detail);
+      setErrors(error.response?.data?.detail);
     }
   };
 
@@ -27,11 +27,17 @@ const LoginPage = () => {
         method="post"
         onSubmit={handleSubmit}
       >
-        {errors.length > 0 && (
+        {/* {errors.length > 0 && (
           <div className="w-full text-red-900 bg-red-200 text-center mb-5 p-2">
             {errors.map((error) => (
               <p key={error[0]}>{error[0] + " " + error[1]}</p>
             ))}
+          </div>
+        )} */}
+
+        {errors && (
+          <div className="w-full text-red-900 bg-red-200 text-center mb-5 p-2">
+            {errors}
           </div>
         )}
 

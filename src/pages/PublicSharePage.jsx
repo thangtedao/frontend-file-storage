@@ -11,9 +11,9 @@ const PublicSharePage = () => {
     setFiles([
       {
         id: 1,
-        fileName: "Tai lieu Tieng Anh",
+        originalFileName: "Tai lieu Tieng Anh",
         fileSize: 100,
-        owner: "thang",
+        ownerEmail: "thang@gg.com",
         fileType: "pdf",
       },
     ]);
@@ -26,11 +26,11 @@ const PublicSharePage = () => {
   const config = [
     {
       label: "Name",
-      render: (file) => <div className="">{file.fileName}</div>,
+      render: (file) => <div className="">{file.originalFileName}</div>,
     },
     {
       label: "Owner",
-      render: (file) => file.owner,
+      render: (file) => file.ownerEmail,
     },
     {
       label: "Type",

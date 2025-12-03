@@ -109,7 +109,7 @@ const TrashPage = () => {
     },
     {
       label: "Owner",
-      render: (file) => file.owner,
+      render: (file) => file.ownerEmail,
     },
     {
       label: "Type",

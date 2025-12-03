@@ -9,16 +9,17 @@ const RegisterPage = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState([]);
+  const [confirmPassword, setconfirmPassword] = useState("");
+  const [errors, setErrors] = useState(null);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      await register({ username, email, password });
+      await register({ username, email, password, confirmPassword });
       navigate("/login");
     } catch (error) {
       console.log(error);
-      setErrors(Object.entries(error.response?.data || {}));
+      setErrors(error.response?.data?.detail);
     }
   };
 
@@ -29,13 +30,12 @@ const RegisterPage = () => {
         method="post"
         onSubmit={handleSubmit}
       >
-        {errors.length > 0 && (
+        {errors && (
           <div className="w-full text-red-900 bg-red-200 text-center mb-5 p-2">
-            {errors.map((error) => (
-              <p key={error[0]}>{error[0] + " " + error[1]}</p>
-            ))}
+            {errors}
           </div>
         )}
+
         <div className="text-4xl text-center font-bold mb-5">Sign Up</div>
 
         <div className="w-full px-3 py-2 rounded-lg border border-gray-300">
@@ -66,6 +66,17 @@ const RegisterPage = () => {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
+
+        <div className="w-full px-3 py-2 rounded-lg border border-gray-300">
+          <input
+            type="password"
+            className="focus:outline-none w-full"
+            name="confirmPassword"
+            placeholder="Confirm Password"
+            value={confirmPassword}
+            onChange={(e) => setconfirmPassword(e.target.value)}
           />
         </div>
 

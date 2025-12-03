@@ -9,18 +9,14 @@ import {
 } from "react-icons/hi";
 import FileMenu from "../components/FileMenu";
 import FileShareModal from "../components/FileShareModal";
-import {
-  deleteFile,
-  downloadFile,
-  getActiveFiles,
-} from "../services/fileService";
+import { downloadFile, getFiles } from "../services/fileService";
 import { useLoaderData, useNavigate, useRevalidator } from "react-router-dom";
 import { saveAs } from "file-saver";
 import { formatFileSize } from "../utils/formatFileSize";
 
 export const loader = async () => {
   try {
-    const data = await getActiveFiles();
+    const data = await getFiles();
     return { data };
   } catch (error) {
     console.log(error);
@@ -37,10 +33,10 @@ const FilesPage = () => {
 
   const [isDownloading, setIsDownloading] = useState(false);
 
-  const handleDownload = async (id) => {
+  const handleDownload = async (fileId) => {
     setIsDownloading(true);
     try {
-      const response = await downloadFile(id);
+      const response = await downloadFile(fileId);
 
       // Tạo Blob từ dữ liệu và download file
       const blob = new Blob([response.data]);
@@ -63,14 +59,14 @@ const FilesPage = () => {
     }
   };
 
-  const handleDelete = async (id) => {
-    try {
-      await deleteFile(id);
-      setFiles((prev) => prev.filter((value) => value.id !== id));
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const handleDelete = async (id) => {
+  //   try {
+  //     await deleteFile(id);
+  //     setFiles((prev) => prev.filter((value) => value.id !== id));
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   const handleCloseModal = () => {
     setShowModal(false);
@@ -104,9 +100,9 @@ const FilesPage = () => {
           <HiTrash /> Delete
         </div>
       ),
-      onClick: (file) => {
-        handleDelete(file.id);
-      },
+      // onClick: (file) => {
+      //   handleDelete(file.id);
+      // },
     },
   ];
 
@@ -115,13 +111,13 @@ const FilesPage = () => {
       label: "Name",
       render: (file) => (
         <div className="flex gap-2 items-center">
-          {file.share && <HiShare />} {file.originalFileName}
+          {<HiShare />} {file.originalFileName}
         </div>
       ),
     },
     {
       label: "Owner",
-      render: (file) => file.owner,
+      render: (file) => file.ownerEmail,
     },
     {
       label: "Type",

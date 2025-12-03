@@ -21,7 +21,7 @@ apiClient.interceptors.response.use(
     if (
       error.response &&
       (error.response.status === "401" || error.response.status === "403") &&
-      !error.config?.url?.startsWith("/auth/")
+      !error.config?.url?.startsWith("/account/")
     ) {
       // Lưu URL hiện tại để redirect sau khi đăng nhập lại
       localStorage.setItem("redirectAfterLogin", window.location.pathname);

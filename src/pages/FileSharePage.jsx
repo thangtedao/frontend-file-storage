@@ -4,15 +4,13 @@ import Panel from "../components/Panel";
 import Table from "../components/Table";
 import { useLoaderData } from "react-router-dom";
 import { useRootContext } from "./Root";
-import {
-  downloadShareFile,
-  getFilesShareWithMe,
-} from "../services/fileService";
+import { getFilesShare } from "../services/fileShareService";
+import { downloadFile } from "../services/fileService";
 import { formatFileSize } from "../utils/formatFileSize";
 
 export const loader = async () => {
   try {
-    const data = await getFilesShareWithMe();
+    const data = await getFilesShare();
     return { data };
   } catch (error) {
     console.log(error);
@@ -33,40 +31,40 @@ const FileSharePage = () => {
     filterData();
   }, []);
 
-  const handleDownload = async (token) => {
-    setIsDownloading(true);
-    try {
-      const response = await downloadShareFile(token);
+  // const handleDownload = async (fileId) => {
+  //   setIsDownloading(true);
+  //   try {
+  //     const response = await downloadFile(fileId);
 
-      // Tạo Blob từ dữ liệu và download file
-      const blob = new Blob([response.data]);
+  //     // Tạo Blob từ dữ liệu và download file
+  //     const blob = new Blob([response.data]);
 
-      // Lấy tên file từ header
-      let downloadFileName = fileName;
-      const contentDisposition = response.headers["content-disposition"];
-      if (contentDisposition) {
-        const fileNameMatch = contentDisposition.match(/filename="(.+)"/);
-        if (fileNameMatch.length === 2) {
-          downloadFileName = fileNameMatch[1];
-        }
-      }
+  //     // Lấy tên file từ header
+  //     let downloadFileName = fileName;
+  //     const contentDisposition = response.headers["content-disposition"];
+  //     if (contentDisposition) {
+  //       const fileNameMatch = contentDisposition.match(/filename="(.+)"/);
+  //       if (fileNameMatch.length === 2) {
+  //         downloadFileName = fileNameMatch[1];
+  //       }
+  //     }
 
-      saveAs(blob, downloadFileName);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsDownloading(false);
-    }
-  };
+  //     saveAs(blob, downloadFileName);
+  //   } catch (error) {
+  //     console.log(error);
+  //   } finally {
+  //     setIsDownloading(false);
+  //   }
+  // };
 
   const config = [
     {
       label: "Name",
-      render: (file) => <div className="">{file.fileName}</div>,
+      render: (file) => <div className="">{file.originalFileName}</div>,
     },
     {
       label: "Owner",
-      render: (file) => file.owner,
+      render: (file) => file.ownerEmail,
     },
     {
       label: "Type",
@@ -76,15 +74,15 @@ const FileSharePage = () => {
       label: "Size",
       render: (file) => formatFileSize(file.fileSize),
     },
-    {
-      label: "",
-      render: (file) => (
-        <HiDownload
-          className="text-lg cursor-pointer"
-          onClick={() => handleDownload(file.shareToken)}
-        />
-      ),
-    },
+    // {
+    //   label: "",
+    //   render: (file) => (
+    //     <HiDownload
+    //       className="text-lg cursor-pointer"
+    //       onClick={() => handleDownload(file.shareToken)}
+    //     />
+    //   ),
+    // },
   ];
 
   const keyFn = (file) => file.id;

@@ -9,7 +9,7 @@ import {
 } from "react-icons/hi";
 import FileMenu from "../components/FileMenu";
 import FileShareModal from "../components/FileShareModal";
-import { deleteFile, downloadFile, searchFiles } from "../services/fileService";
+import { downloadFile, searchFiles } from "../services/fileService";
 import { redirect, useLoaderData } from "react-router-dom";
 import { saveAs } from "file-saver";
 import { formatFileSize } from "../utils/formatFileSize";
@@ -37,10 +37,10 @@ const SearchPage = () => {
 
   // console.log(data);
 
-  const handleDownload = async (id) => {
+  const handleDownload = async (fileId) => {
     setIsDownloading(true);
     try {
-      const response = await downloadFile(id);
+      const response = await downloadFile(fileId);
 
       // Tạo Blob từ dữ liệu và download file
       const blob = new Blob([response.data]);
@@ -63,14 +63,14 @@ const SearchPage = () => {
     }
   };
 
-  const handleDelete = async (id) => {
-    try {
-      await deleteFile(id);
-      setFiles((prev) => prev.filter((value) => value.id !== id));
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const handleDelete = async (id) => {
+  //   try {
+  //     await deleteFile(id);
+  //     setFiles((prev) => prev.filter((value) => value.id !== id));
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   const handleCloseModal = () => {
     setShowModal(false);
@@ -104,9 +104,9 @@ const SearchPage = () => {
           <HiTrash /> Delete
         </div>
       ),
-      onClick: (file) => {
-        handleDelete(file.id);
-      },
+      // onClick: (file) => {
+      //   handleDelete(file.id);
+      // },
     },
   ];
 
@@ -117,7 +117,7 @@ const SearchPage = () => {
     },
     {
       label: "Owner",
-      render: (file) => file.owner,
+      render: (file) => file.ownerEmail,
     },
     {
       label: "Type",

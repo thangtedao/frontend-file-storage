@@ -3,10 +3,10 @@ import Modal from "./Modal";
 import Button from "./Button";
 import { HiTrash } from "react-icons/hi";
 import {
-  getSharingInfo,
+  getFilesShare,
   removeShareFile,
   shareFile,
-} from "../services/fileService";
+} from "../services/fileShareService";
 import { useRootContext } from "../pages/Root";
 
 const FileShareModal = ({ onClose, file }) => {
@@ -21,7 +21,7 @@ const FileShareModal = ({ onClose, file }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await getSharingInfo(file.id);
+      const data = await getFilesShare(file.id);
       setUrl(data.shareUrl || "");
       setEmails(data.emails?.filter((value) => value !== user.email) || []);
     };
@@ -124,7 +124,7 @@ const FileShareModal = ({ onClose, file }) => {
         <div className="flex gap-3">
           <Button
             primary
-            disabled={file.share}
+            // disabled={file.share}
             rounded
             onClick={handleRemoveShare}
           >
