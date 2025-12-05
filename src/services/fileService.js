@@ -21,8 +21,8 @@ export const getActiveFiles = async () => {
 
 export const getDeletedFiles = async () => {
   try {
-    return null;
-    const response = await apiClient.get("/file/deleted");
+    const response = await apiClient.get("/file/deleted-file");
+    return response.data;
   } catch (error) {
     throw error;
   }
@@ -48,8 +48,8 @@ export const downloadFile = async (id) => {
 
 export const deleteFile = async (id) => {
   try {
-    return null;
-    const response = await apiClient.patch(`/file/${id}/delete`);
+    const response = await apiClient.patch(`/file/delete/${id}`);
+    return response.data;
   } catch (error) {
     throw error;
   }
@@ -57,8 +57,7 @@ export const deleteFile = async (id) => {
 
 export const permanentDeleteFile = async (id) => {
   try {
-    return null;
-    const response = await apiClient.delete(`/file/${id}`);
+    await apiClient.delete(`/file/${id}`);
   } catch (error) {
     throw error;
   }
@@ -66,8 +65,8 @@ export const permanentDeleteFile = async (id) => {
 
 export const restoreFile = async (id) => {
   try {
-    return null;
-    const response = await apiClient.patch(`/file/${id}/restore`);
+    const response = await apiClient.patch(`/file/restore/${id}`);
+    return response.data;
   } catch (error) {
     throw error;
   }

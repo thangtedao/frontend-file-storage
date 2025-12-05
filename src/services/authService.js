@@ -14,7 +14,11 @@ export const register = async (data) => {
 
 export const login = async (username, password) => {
   try {
-    await apiClient.post("/account/login", { username, password });
+    const response = await apiClient.post("/account/login", {
+      username,
+      password,
+    });
+    localStorage.setItem("token", response.data.token);
   } catch (error) {
     throw error;
   }
@@ -31,8 +35,15 @@ export const logout = async () => {
 export const getUser = async () => {
   try {
     const response = await apiClient.get("/account/current-user");
-    console.log(response);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
 
+export const checkEmail = async (email) => {
+  try {
+    const response = await apiClient.get(`/account/check-email/${email}`);
     return response.data;
   } catch (error) {
     throw error;

@@ -7,6 +7,7 @@ import { useRootContext } from "./Root";
 import { getFilesShare } from "../services/fileShareService";
 import { downloadFile } from "../services/fileService";
 import { formatFileSize } from "../utils/formatFileSize";
+import { getFileNameFromContentDisposition } from "../utils/getFileName";
 
 export const loader = async () => {
   try {
@@ -31,31 +32,27 @@ const FileSharePage = () => {
     filterData();
   }, []);
 
-  // const handleDownload = async (fileId) => {
-  //   setIsDownloading(true);
-  //   try {
-  //     const response = await downloadFile(fileId);
+  const handleDownload = async (fileId) => {
+    setIsDownloading(true);
+    try {
+      const response = await downloadFile(fileId);
 
-  //     // Tạo Blob từ dữ liệu và download file
-  //     const blob = new Blob([response.data]);
+      // Tạo Blob từ dữ liệu và download file
+      const blob = new Blob([response.data]);
 
-  //     // Lấy tên file từ header
-  //     let downloadFileName = fileName;
-  //     const contentDisposition = response.headers["content-disposition"];
-  //     if (contentDisposition) {
-  //       const fileNameMatch = contentDisposition.match(/filename="(.+)"/);
-  //       if (fileNameMatch.length === 2) {
-  //         downloadFileName = fileNameMatch[1];
-  //       }
-  //     }
+      // Lấy tên file từ header
+      const contentDisposition = response.headers["content-disposition"];
+      const downloadFileName =
+        getFileNameFromContentDisposition(contentDisposition) ||
+        "downloaded_file";
 
-  //     saveAs(blob, downloadFileName);
-  //   } catch (error) {
-  //     console.log(error);
-  //   } finally {
-  //     setIsDownloading(false);
-  //   }
-  // };
+      saveAs(blob, downloadFileName);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsDownloading(false);
+    }
+  };
 
   const config = [
     {
@@ -74,15 +71,15 @@ const FileSharePage = () => {
       label: "Size",
       render: (file) => formatFileSize(file.fileSize),
     },
-    // {
-    //   label: "",
-    //   render: (file) => (
-    //     <HiDownload
-    //       className="text-lg cursor-pointer"
-    //       onClick={() => handleDownload(file.shareToken)}
-    //     />
-    //   ),
-    // },
+    {
+      label: "",
+      render: (file) => (
+        <HiDownload
+          className="text-lg cursor-pointer"
+          onClick={() => handleDownload(file.id)}
+        />
+      ),
+    },
   ];
 
   const keyFn = (file) => file.id;

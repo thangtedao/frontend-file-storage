@@ -9,10 +9,11 @@ import {
 } from "react-icons/hi";
 import FileMenu from "../components/FileMenu";
 import FileShareModal from "../components/FileShareModal";
-import { downloadFile, searchFiles } from "../services/fileService";
+import { downloadFile, searchFiles, deleteFile } from "../services/fileService";
 import { redirect, useLoaderData } from "react-router-dom";
 import { saveAs } from "file-saver";
 import { formatFileSize } from "../utils/formatFileSize";
+import { getFileNameFromContentDisposition } from "../utils/getFileName";
 
 export const loader = async (request) => {
   const { term } = request.params;
@@ -46,14 +47,10 @@ const SearchPage = () => {
       const blob = new Blob([response.data]);
 
       // Lấy tên file từ header
-      let downloadFileName = fileName;
       const contentDisposition = response.headers["content-disposition"];
-      if (contentDisposition) {
-        const fileNameMatch = contentDisposition.match(/filename="(.+)"/);
-        if (fileNameMatch.length === 2) {
-          downloadFileName = fileNameMatch[1];
-        }
-      }
+      const downloadFileName =
+        getFileNameFromContentDisposition(contentDisposition) ||
+        "downloaded_file";
 
       saveAs(blob, downloadFileName);
     } catch (error) {
@@ -63,14 +60,14 @@ const SearchPage = () => {
     }
   };
 
-  // const handleDelete = async (id) => {
-  //   try {
-  //     await deleteFile(id);
-  //     setFiles((prev) => prev.filter((value) => value.id !== id));
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
+  const handleDelete = async (id) => {
+    try {
+      await deleteFile(id);
+      setFiles((prev) => prev.filter((value) => value.id !== id));
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handleCloseModal = () => {
     setShowModal(false);
@@ -104,9 +101,9 @@ const SearchPage = () => {
           <HiTrash /> Delete
         </div>
       ),
-      // onClick: (file) => {
-      //   handleDelete(file.id);
-      // },
+      onClick: (file) => {
+        handleDelete(file.id);
+      },
     },
   ];
 
