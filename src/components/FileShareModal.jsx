@@ -3,10 +3,13 @@ import Modal from "./Modal";
 import Button from "./Button";
 import { HiTrash } from "react-icons/hi";
 import {
-  getFilesShare,
+  getPublicLinkInfo,
   removeShareFile,
   shareFile,
+  updateShareFile,
   shareFilePublicly,
+  removePublicLink,
+  getFileShareInfo,
 } from "../services/fileShareService";
 import { checkEmail } from "../services/authService";
 import { useRootContext } from "../pages/Root";
@@ -18,7 +21,7 @@ const FileShareModal = ({ onClose, file }) => {
   const [emails, setEmails] = useState([]);
   const [email, setEmail] = useState("");
   const [emailErr, setEmailErr] = useState("");
-  const [url, setUrl] = useState("");
+  const [url, setUrl] = useState(null);
   const [isAdding, setIsAdding] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
 
@@ -31,9 +34,11 @@ const FileShareModal = ({ onClose, file }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await getFilesShare(file.id);
-      setUrl(data.shareUrl || "");
-      setEmails(data.emails?.filter((value) => value !== user.email) || []);
+      const data = await getFileShareInfo(file.id);
+      const url = await getPublicLinkInfo(file.id);
+      const listEmail = data.map((f) => f.sharedEmail);
+      setEmails(listEmail || []);
+      setUrl(url || null);
     };
 
     fetchData();
@@ -50,6 +55,7 @@ const FileShareModal = ({ onClose, file }) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       setEmailErr("Invalid email!!!");
+      return;
     }
 
     if (email === user?.email) {
@@ -80,39 +86,55 @@ const FileShareModal = ({ onClose, file }) => {
     if (selected === "user") {
       shareWithUser();
     }
+    onClose();
   };
 
   //Share with user
   const shareWithUser = async () => {
     if (emails.length <= 0) return;
     setIsSharing(true);
-    await shareFile(file.id, { emails })
-      .catch((error) => {
-        console.log(error);
-      })
-      .finally(() => {
-        setIsSharing(false);
-      });
+    const request = emails.map((e) => ({ email: e }));
+    if (emails.length > 0 || url) {
+      await updateShareFile(file.id, request)
+        .catch((error) => {
+          console.log(error);
+        })
+        .finally(() => {
+          setIsSharing(false);
+        });
+    } else {
+      await shareFile(file.id, request)
+        .catch((error) => {
+          console.log(error);
+        })
+        .finally(() => {
+          setIsSharing(false);
+        });
+    }
   };
 
   //Share public
   const sharePublic = async () => {
     setIsSharing(true);
-    const res = await shareFilePublicly(file.id);
-    if (res?.data) {
-      setUrl(res.data);
+    const link = await shareFilePublicly(file.id);
+    if (link) {
+      setUrl(link);
     }
     setIsSharing(false);
   };
 
-  const handleRemoveShare = async () => {
-    const res = await removeShareFile(file.id)
+  //Remove public link
+  const handleRemovePublicShare = async () => {
+    setIsSharing(true);
+    await removePublicLink(url?.id)
       .then(() => {
-        onClose();
+        // onClose();
       })
       .catch((error) => {
         console.log(error);
       });
+    setUrl(null);
+    setIsSharing(false);
   };
 
   const actionBar = (
@@ -166,7 +188,7 @@ const FileShareModal = ({ onClose, file }) => {
             <div className="flex flex-col gap-1">
               <div className="flex justify-between gap-2">
                 <input
-                  className="focus:outline-none w-[75%] px-3 border border-gray-300 rounded-lg"
+                  className="focus:outline-none flex-1 px-3 border border-gray-300 rounded-lg"
                   placeholder="Email..."
                   value={email}
                   onChange={(event) => setEmail(event.target.value)}
@@ -191,29 +213,32 @@ const FileShareModal = ({ onClose, file }) => {
         ) : (
           <div className="h-full">
             <div>Public Link:</div>
-            <div className="flex justify-between gap-2">
+            <div className="flex justify-between gap-3">
               <input
-                className="focus:outline-none w-[70%] px-3 border border-gray-300 rounded-lg"
-                value={url}
+                className="focus:outline-none flex-1 px-3 border border-gray-300 rounded-lg"
+                value={url?.token || ""}
                 readOnly
               />
-              <div className="flex gap-3">
-                <Button
-                  primary
-                  disabled={isSharing}
-                  rounded
-                  onClick={sharePublic}
-                >
-                  Get Link
-                </Button>
-                {/* <Button
-                  primary
-                  // disabled={file.share}
-                  rounded
-                  onClick={handleRemoveShare}
-                >
-                  Remove
-                </Button> */}
+              <div className="flex">
+                {url ? (
+                  <Button
+                    primary
+                    loading={isSharing}
+                    rounded
+                    onClick={() => handleRemovePublicShare()}
+                  >
+                    Remove
+                  </Button>
+                ) : (
+                  <Button
+                    primary
+                    loading={isSharing}
+                    rounded
+                    onClick={() => sharePublic()}
+                  >
+                    Get Link
+                  </Button>
+                )}
               </div>
             </div>
           </div>

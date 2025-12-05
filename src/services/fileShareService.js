@@ -39,6 +39,24 @@ export const getFilesShare = async () => {
   }
 };
 
+export const getFileShareInfo = async (fileId) => {
+  try {
+    const response = await apiClient.get(`/fileshare/${fileId}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getPublicLinkInfo = async (fileId) => {
+  try {
+    const response = await apiClient.get(`/fileshare/public-link/${fileId}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const shareFilePublicly = async (fileId) => {
   try {
     const response = await apiClient.post(`/fileshare/${fileId}/share-public`);
@@ -68,7 +86,7 @@ export const downloadPublicFile = async (token) => {
 
 export const removePublicLink = async (id) => {
   try {
-    const response = await apiClient.delete(`/fileshare/${id}`);
+    const response = await apiClient.delete(`/fileshare/${id}/remove-public`);
     return response;
   } catch (error) {
     throw error;

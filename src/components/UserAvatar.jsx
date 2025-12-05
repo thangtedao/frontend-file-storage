@@ -38,6 +38,7 @@ const UserAvatar = () => {
     event.stopPropagation();
     try {
       await logout();
+      localStorage.removeItem("token");
       navigate("/login");
     } catch (error) {
       console.log(error);
