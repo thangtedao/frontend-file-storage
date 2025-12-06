@@ -74,8 +74,7 @@ export const restoreFile = async (id) => {
 
 export const emptyTrash = async () => {
   try {
-    return null;
-    const response = await apiClient.delete(`/file`);
+    await apiClient.delete(`/file/empty-trash`);
   } catch (error) {
     throw error;
   }
@@ -83,7 +82,7 @@ export const emptyTrash = async () => {
 
 export const searchFiles = async (term) => {
   try {
-    const response = await apiClient.get(`/file?search=${term}`);
+    const response = await apiClient.get(`/file/search/${term}`);
     return response.data;
   } catch (error) {
     throw error;

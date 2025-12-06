@@ -91,7 +91,6 @@ const FileShareModal = ({ onClose, file }) => {
 
   //Share with user
   const shareWithUser = async () => {
-    if (emails.length <= 0) return;
     setIsSharing(true);
     const request = emails.map((e) => ({ email: e }));
     if (emails.length > 0 || url) {
@@ -137,8 +136,33 @@ const FileShareModal = ({ onClose, file }) => {
     setIsSharing(false);
   };
 
+  //Remove share
+  const handleRemoveShare = async () => {
+    setIsSharing(true);
+    await removeShareFile(file?.id)
+      .then(() => {
+        // onClose();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    setEmails([]);
+    setIsSharing(false);
+  };
+
   const actionBar = (
     <div className="flex gap-3">
+      {selected === "user" && (
+        <Button
+          secondary
+          rounded
+          loading={isSharing}
+          disabled={emails.length <= 0}
+          onClick={handleRemoveShare}
+        >
+          Remove Share
+        </Button>
+      )}
       <Button primary rounded loading={isSharing} onClick={handleShare}>
         Save
       </Button>

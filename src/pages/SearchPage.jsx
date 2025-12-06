@@ -20,6 +20,8 @@ export const loader = async (request) => {
   try {
     if (term === "") return redirect("/files");
     const data = await searchFiles(term);
+    console.log(data);
+
     return { data, term };
   } catch (error) {
     console.log(error);
@@ -35,8 +37,6 @@ const SearchPage = () => {
   const [showModal, setShowModal] = useState(false);
 
   const [isDownloading, setIsDownloading] = useState(false);
-
-  // console.log(data);
 
   const handleDownload = async (fileId) => {
     setIsDownloading(true);
@@ -113,8 +113,8 @@ const SearchPage = () => {
       render: (file) => <div className="">{file.originalFileName}</div>,
     },
     {
-      label: "Owner",
-      render: (file) => file.ownerEmail,
+      label: "Date",
+      render: (file) => file.createdAt?.replace("T", " ").slice(0, 19),
     },
     {
       label: "Type",

@@ -108,13 +108,13 @@ const FilesPage = () => {
       label: "Name",
       render: (file) => (
         <div className="flex gap-2 items-center">
-          {<HiShare />} {file.originalFileName}
+          {file.isShare && <HiShare />} {file.originalFileName}
         </div>
       ),
     },
     {
-      label: "Owner",
-      render: (file) => file.ownerEmail,
+      label: "Date",
+      render: (file) => file.createdAt?.replace("T", " ").slice(0, 19),
     },
     {
       label: "Type",

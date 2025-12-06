@@ -34,7 +34,7 @@ const Button = ({
   );
 
   return (
-    <button {...rest} disabled={loading} className={classes}>
+    <button disabled={loading} {...rest} className={classes}>
       {loading ? (
         <AiOutlineLoading3Quarters className="animate-spin" />
       ) : (

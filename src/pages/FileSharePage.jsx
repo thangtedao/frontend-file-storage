@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { HiDownload } from "react-icons/hi";
 import Panel from "../components/Panel";
 import Table from "../components/Table";
 import { useLoaderData } from "react-router-dom";
-import { useRootContext } from "./Root";
 import { getFilesShare } from "../services/fileShareService";
 import { downloadFile } from "../services/fileService";
 import { formatFileSize } from "../utils/formatFileSize";
@@ -19,18 +18,10 @@ export const loader = async () => {
 };
 
 const FileSharePage = () => {
-  const { user } = useRootContext();
   const { data } = useLoaderData();
 
   const [files, setFiles] = useState(data || []);
   const [isDownloading, setIsDownloading] = useState(false);
-
-  useEffect(() => {
-    const filterData = () => {
-      setFiles((prev) => prev.filter((value) => value.owner !== user.email));
-    };
-    filterData();
-  }, []);
 
   const handleDownload = async (fileId) => {
     setIsDownloading(true);
