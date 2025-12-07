@@ -240,7 +240,9 @@ const FileShareModal = ({ onClose, file }) => {
             <div className="flex justify-between gap-3">
               <input
                 className="focus:outline-none flex-1 px-3 border border-gray-300 rounded-lg"
-                value={url?.token || ""}
+                value={
+                  url?.token ? `localhost:5173/file/${url?.token}/share` : ""
+                }
                 readOnly
               />
               <div className="flex">

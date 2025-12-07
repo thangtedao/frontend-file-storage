@@ -15,6 +15,7 @@ import { loader as filesLoader } from "./pages/FilesPage";
 import { loader as trashLoader } from "./pages/TrashPage";
 import { loader as shareLoader } from "./pages/FileSharePage";
 import { loader as searchLoader } from "./pages/SearchPage";
+import { loader as publicShareLoader } from "./pages/PublicSharePage";
 import RegisterPage from "./pages/RegisterPage";
 import PublicSharePage from "./pages/PublicSharePage";
 
@@ -65,8 +66,9 @@ const router = createBrowserRouter([
     element: <RegisterPage />,
   },
   {
-    path: "/public/:token/share",
+    path: "file/:token/share",
     element: <PublicSharePage />,
+    loader: publicShareLoader,
   },
 ]);
 
