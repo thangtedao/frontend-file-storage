@@ -27,14 +27,6 @@ const LoginPage = () => {
         method="post"
         onSubmit={handleSubmit}
       >
-        {/* {errors.length > 0 && (
-          <div className="w-full text-red-900 bg-red-200 text-center mb-5 p-2">
-            {errors.map((error) => (
-              <p key={error[0]}>{error[0] + " " + error[1]}</p>
-            ))}
-          </div>
-        )} */}
-
         {errors && (
           <div className="w-full text-red-900 bg-red-200 text-center mb-5 p-2">
             {errors}
@@ -45,6 +37,7 @@ const LoginPage = () => {
 
         <div className="w-full px-3 py-2 rounded-lg border border-gray-300">
           <input
+            required
             className="focus:outline-none w-full"
             name="username"
             placeholder="Username"
@@ -55,6 +48,7 @@ const LoginPage = () => {
 
         <div className="w-full px-3 py-2 rounded-lg border border-gray-300">
           <input
+            required
             type="password"
             className="focus:outline-none w-full"
             name="password"

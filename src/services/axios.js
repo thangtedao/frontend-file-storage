@@ -1,4 +1,5 @@
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const apiClient = axios.create({
   baseURL: "/api",
@@ -27,12 +28,12 @@ apiClient.interceptors.response.use(
       (error.response.status === 401 || error.response.status === 403)
       // !error.config?.url?.startsWith("/account/")
     ) {
-      isRedirecting = true;
       // Lưu URL hiện tại để redirect sau khi đăng nhập lại
       localStorage.setItem("redirectAfterLogin", window.location.pathname);
       window.location.assign("/login");
     } else if (error.response) {
       console.error("API error:", error.response.data);
+      toast.error(error.response?.data?.detail);
     }
     return Promise.reject(error);
   }

@@ -6,6 +6,7 @@ import {
   HiDownload,
   HiShare,
   HiTrash,
+  HiEye,
 } from "react-icons/hi";
 import FileMenu from "../components/FileMenu";
 import FileShareModal from "../components/FileShareModal";
@@ -14,14 +15,13 @@ import { redirect, useLoaderData } from "react-router-dom";
 import { saveAs } from "file-saver";
 import { formatFileSize } from "../utils/formatFileSize";
 import { getFileNameFromContentDisposition } from "../utils/getFileName";
+import FilePreview from "../components/FilePreview";
 
 export const loader = async (request) => {
   const { term } = request.params;
   try {
     if (term === "") return redirect("/files");
     const data = await searchFiles(term);
-    console.log(data);
-
     return { data, term };
   } catch (error) {
     console.log(error);
@@ -35,6 +35,8 @@ const SearchPage = () => {
   const [files, setFiles] = useState(data || []);
   const [fileShare, setFileShare] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const [filePreview, setFilePreview] = useState(null);
 
   const [isDownloading, setIsDownloading] = useState(false);
 
@@ -69,11 +71,34 @@ const SearchPage = () => {
     }
   };
 
+  const handlePreview = async (file) => {
+    if (
+      file.fileType === "application/pdf" ||
+      file.fileType === "image/png" ||
+      file.fileType === "image/jpeg" ||
+      file.fileType === "image/jpg" ||
+      file.fileType === "text/plain"
+    ) {
+      setFilePreview(file);
+      setShowPreview(true);
+    }
+  };
+
   const handleCloseModal = () => {
     setShowModal(false);
   };
 
   const menuOptions = [
+    {
+      label: (
+        <div className="flex items-center gap-2">
+          <HiEye /> View
+        </div>
+      ),
+      onClick: (file) => {
+        handlePreview(file);
+      },
+    },
     {
       label: (
         <div className="flex items-center gap-2">
@@ -110,7 +135,11 @@ const SearchPage = () => {
   const config = [
     {
       label: "Name",
-      render: (file) => <div className="">{file.originalFileName}</div>,
+      render: (file) => (
+        <div className="flex gap-2 items-center">
+          {file.isShare && <HiShare />} {file.originalFileName}
+        </div>
+      ),
     },
     {
       label: "Date",
@@ -150,7 +179,11 @@ const SearchPage = () => {
       )}
 
       {showModal && (
-        <FileShareModal onClose={handleCloseModal} fileShare={fileShare} />
+        <FileShareModal onClose={handleCloseModal} file={fileShare} />
+      )}
+
+      {showPreview && (
+        <FilePreview file={filePreview} onClose={() => setShowPreview(false)} />
       )}
     </div>
   );

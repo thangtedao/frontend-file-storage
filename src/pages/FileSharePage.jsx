@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { HiDownload } from "react-icons/hi";
+import { HiDownload, HiEye } from "react-icons/hi";
 import Panel from "../components/Panel";
 import Table from "../components/Table";
 import { useLoaderData } from "react-router-dom";
@@ -7,6 +7,8 @@ import { getFilesShare } from "../services/fileShareService";
 import { downloadFile } from "../services/fileService";
 import { formatFileSize } from "../utils/formatFileSize";
 import { getFileNameFromContentDisposition } from "../utils/getFileName";
+import FilePreview from "../components/FilePreview";
+import { toast } from "react-toastify";
 
 export const loader = async () => {
   try {
@@ -21,6 +23,8 @@ const FileSharePage = () => {
   const { data } = useLoaderData();
 
   const [files, setFiles] = useState(data || []);
+  const [showPreview, setShowPreview] = useState(false);
+  const [filePreview, setFilePreview] = useState(null);
   const [isDownloading, setIsDownloading] = useState(false);
 
   const handleDownload = async (fileId) => {
@@ -45,6 +49,21 @@ const FileSharePage = () => {
     }
   };
 
+  const handlePreview = async (file) => {
+    if (
+      file.fileType === "application/pdf" ||
+      file.fileType === "image/png" ||
+      file.fileType === "image/jpeg" ||
+      file.fileType === "image/jpg" ||
+      file.fileType === "text/plain"
+    ) {
+      setFilePreview(file);
+      setShowPreview(true);
+    } else {
+      toast.warning("Cannot view this file");
+    }
+  };
+
   const config = [
     {
       label: "Name",
@@ -63,7 +82,16 @@ const FileSharePage = () => {
       render: (file) => formatFileSize(file.fileSize),
     },
     {
-      label: "",
+      label: "View",
+      render: (file) => (
+        <HiEye
+          className="text-lg cursor-pointer"
+          onClick={() => handlePreview(file)}
+        />
+      ),
+    },
+    {
+      label: "Download",
       render: (file) => (
         <HiDownload
           className="text-lg cursor-pointer"
@@ -86,6 +114,10 @@ const FileSharePage = () => {
         <div className="w-full h-full flex justify-center items-center text-2xl  mb-30">
           Empty
         </div>
+      )}
+
+      {showPreview && (
+        <FilePreview file={filePreview} onClose={() => setShowPreview(false)} />
       )}
     </div>
   );

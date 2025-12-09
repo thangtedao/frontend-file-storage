@@ -15,6 +15,7 @@ import { TbTrashOff } from "react-icons/tb";
 import FileMenu from "../components/FileMenu";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { formatFileSize } from "../utils/formatFileSize";
+import { toast } from "react-toastify";
 
 export const loader = async () => {
   try {
@@ -43,6 +44,7 @@ const TrashPage = () => {
     try {
       await restoreFile(id);
       setFiles((prev) => prev.filter((value) => value.id !== id));
+      toast.success("Restore Successful");
     } catch (error) {
       console.log(error);
     }
@@ -52,6 +54,7 @@ const TrashPage = () => {
     try {
       await permanentDeleteFile(id);
       setFiles((prev) => prev.filter((value) => value.id !== id));
+      toast.success("Delete Successful");
     } catch (error) {
       console.log(error);
     }

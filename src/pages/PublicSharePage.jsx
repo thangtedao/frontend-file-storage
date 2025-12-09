@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { HiDownload } from "react-icons/hi";
+import { HiDownload, HiEye } from "react-icons/hi";
 import Panel from "../components/Panel";
 import Table from "../components/Table";
 import { formatFileSize } from "../utils/formatFileSize";
@@ -8,6 +8,8 @@ import { redirect, useLoaderData } from "react-router-dom";
 import { getFileNameFromContentDisposition } from "../utils/getFileName";
 import { saveAs } from "file-saver";
 import { downloadPublicFile } from "../services/fileShareService";
+import FilePreview from "../components/FilePreview";
+import { toast } from "react-toastify";
 
 export const loader = async (request) => {
   try {
@@ -34,13 +36,15 @@ const PublicSharePage = () => {
   }
 
   const [files, setFiles] = useState([]);
+  const [showPreview, setShowPreview] = useState(false);
+  const [filePreview, setFilePreview] = useState(null);
   const [isDownloading, setIsDownloading] = useState(false);
   const [isDownloaded, setIsDownloaded] = useState(false);
 
   useEffect(() => {
     setFiles([
       {
-        id: data.publicLinkId,
+        id: data.fileId,
         originalFileName: data.originalFileName,
         fileSize: data.fileSize,
         createdAt: data.createdAt,
@@ -81,6 +85,21 @@ const PublicSharePage = () => {
     }
   };
 
+  const handlePreview = async (file) => {
+    if (
+      file.fileType === "application/pdf" ||
+      file.fileType === "image/png" ||
+      file.fileType === "image/jpeg" ||
+      file.fileType === "image/jpg" ||
+      file.fileType === "text/plain"
+    ) {
+      setFilePreview(file);
+      setShowPreview(true);
+    } else {
+      toast.warning("Cannot view this file");
+    }
+  };
+
   const config = [
     {
       label: "Name",
@@ -98,6 +117,15 @@ const PublicSharePage = () => {
       label: "Size",
       render: (file) => formatFileSize(file.fileSize),
     },
+    // {
+    //   label: "View",
+    //   render: (file) => (
+    //     <HiEye
+    //       className="text-lg cursor-pointer"
+    //       onClick={() => handlePreview(file)}
+    //     />
+    //   ),
+    // },
     {
       label: "",
       render: (file) => (
@@ -120,6 +148,10 @@ const PublicSharePage = () => {
         </Panel>
       ) : (
         <div>FILE NOT FOUND</div>
+      )}
+
+      {showPreview && (
+        <FilePreview file={filePreview} onClose={() => setShowPreview(false)} />
       )}
     </div>
   );

@@ -16,6 +16,7 @@ import { useRootContext } from "../pages/Root";
 import { HiShare } from "react-icons/hi";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { formatFileSize } from "../utils/formatFileSize";
+import { toast } from "react-toastify";
 
 const SideBar = ({ className }) => {
   const { user } = useRootContext();
@@ -43,6 +44,7 @@ const SideBar = ({ className }) => {
       .finally(() => {
         setIsUploading(false);
         navigate("/files");
+        toast.success("Upload Successful");
       });
   };
 

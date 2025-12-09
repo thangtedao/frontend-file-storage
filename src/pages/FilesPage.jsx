@@ -11,11 +11,12 @@ import {
 import FileMenu from "../components/FileMenu";
 import FileShareModal from "../components/FileShareModal";
 import { downloadFile, getFiles, deleteFile } from "../services/fileService";
-import { useLoaderData, useNavigate, useRevalidator } from "react-router-dom";
+import { useLoaderData } from "react-router-dom";
 import { saveAs } from "file-saver";
 import { formatFileSize } from "../utils/formatFileSize";
 import { getFileNameFromContentDisposition } from "../utils/getFileName";
 import FilePreview from "../components/FilePreview";
+import { toast } from "react-toastify";
 
 export const loader = async () => {
   try {
@@ -64,6 +65,7 @@ const FilesPage = () => {
     try {
       await deleteFile(id);
       setFiles((prev) => prev.filter((value) => value.id !== id));
+      toast.success("Delete Successful");
     } catch (error) {
       console.log(error);
     }
@@ -79,6 +81,8 @@ const FilesPage = () => {
     ) {
       setFilePreview(file);
       setShowPreview(true);
+    } else {
+      toast.warning("Cannot view this file");
     }
   };
 

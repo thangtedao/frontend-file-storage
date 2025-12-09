@@ -18,6 +18,7 @@ import { loader as searchLoader } from "./pages/SearchPage";
 import { loader as publicShareLoader } from "./pages/PublicSharePage";
 import RegisterPage from "./pages/RegisterPage";
 import PublicSharePage from "./pages/PublicSharePage";
+import { ToastContainer } from "react-toastify";
 
 const router = createBrowserRouter([
   {
@@ -73,7 +74,12 @@ const router = createBrowserRouter([
 ]);
 
 const App = () => {
-  return <RouterProvider router={router} />;
+  return (
+    <>
+      <RouterProvider router={router} />
+      <ToastContainer />
+    </>
+  );
 };
 
 export default App;
