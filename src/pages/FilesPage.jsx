@@ -6,6 +6,7 @@ import {
   HiDownload,
   HiShare,
   HiTrash,
+  HiEye,
 } from "react-icons/hi";
 import FileMenu from "../components/FileMenu";
 import FileShareModal from "../components/FileShareModal";
@@ -14,6 +15,7 @@ import { useLoaderData, useNavigate, useRevalidator } from "react-router-dom";
 import { saveAs } from "file-saver";
 import { formatFileSize } from "../utils/formatFileSize";
 import { getFileNameFromContentDisposition } from "../utils/getFileName";
+import FilePreview from "../components/FilePreview";
 
 export const loader = async () => {
   try {
@@ -31,6 +33,8 @@ const FilesPage = () => {
   const [files, setFiles] = useState(data || []);
   const [fileShare, setFileShare] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const [filePreview, setFilePreview] = useState(null);
 
   const [isDownloading, setIsDownloading] = useState(false);
 
@@ -65,11 +69,34 @@ const FilesPage = () => {
     }
   };
 
+  const handlePreview = async (file) => {
+    if (
+      file.fileType === "application/pdf" ||
+      file.fileType === "image/png" ||
+      file.fileType === "image/jpeg" ||
+      file.fileType === "image/jpg" ||
+      file.fileType === "text/plain"
+    ) {
+      setFilePreview(file);
+      setShowPreview(true);
+    }
+  };
+
   const handleCloseModal = () => {
     setShowModal(false);
   };
 
   const menuOptions = [
+    {
+      label: (
+        <div className="flex items-center gap-2">
+          <HiEye /> View
+        </div>
+      ),
+      onClick: (file) => {
+        handlePreview(file);
+      },
+    },
     {
       label: (
         <div className="flex items-center gap-2">
@@ -151,6 +178,10 @@ const FilesPage = () => {
 
       {showModal && (
         <FileShareModal onClose={handleCloseModal} file={fileShare} />
+      )}
+
+      {showPreview && (
+        <FilePreview file={filePreview} onClose={() => setShowPreview(false)} />
       )}
     </div>
   );

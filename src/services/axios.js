@@ -7,12 +7,12 @@ const apiClient = axios.create({
 });
 
 apiClient.interceptors.request.use(
-  (config) => {
+  (request) => {
     const token = localStorage.getItem("token");
     if (token) {
-      config.headers["Authorization"] = `Bearer ${token}`;
+      request.headers["Authorization"] = `Bearer ${token}`;
     }
-    return config;
+    return request;
   },
   (error) => {
     return Promise.reject(error);
@@ -24,13 +24,15 @@ apiClient.interceptors.response.use(
   (error) => {
     if (
       error.response &&
-      (error.response.status === 401 || error.response.status === 403) &&
-      !error.config?.url?.startsWith("/account/")
+      (error.response.status === 401 || error.response.status === 403)
+      // !error.config?.url?.startsWith("/account/")
     ) {
       isRedirecting = true;
       // Lưu URL hiện tại để redirect sau khi đăng nhập lại
       localStorage.setItem("redirectAfterLogin", window.location.pathname);
       window.location.assign("/login");
+    } else if (error.response) {
+      console.error("API error:", error.response.data);
     }
     return Promise.reject(error);
   }

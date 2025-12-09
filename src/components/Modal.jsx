@@ -20,7 +20,7 @@ const Modal = ({ onClose, children, actionBar, className }) => {
     <div className=" fixed inset-0 flex justify-center items-center">
       <div
         onClick={onClose}
-        className="fixed inset-0 bg-gray-300 opacity-30"
+        className="fixed inset-0 bg-gray-500 opacity-30"
       ></div>
       <div className={classes}>
         <div className="flex flex-col justify-between h-full">

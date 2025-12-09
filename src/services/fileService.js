@@ -89,6 +89,15 @@ export const searchFiles = async (term) => {
   }
 };
 
+export const getSignedUrl = async (fileId) => {
+  try {
+    const response = await apiClient.get(`/file/generate-signed-url/${fileId}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 // DEV ONLY !!!
 const pause = (duration) => {
   return new Promise((resolve) => {
