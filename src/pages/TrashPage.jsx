@@ -22,7 +22,7 @@ export const loader = async () => {
     const data = await getDeletedFiles();
     return data;
   } catch (error) {
-    console.log(error);
+    return null;
   }
 };
 
@@ -45,9 +45,7 @@ const TrashPage = () => {
       await restoreFile(id);
       setFiles((prev) => prev.filter((value) => value.id !== id));
       toast.success("Restore Successful");
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
 
   const handlePermanentDelete = async (id) => {
@@ -55,9 +53,7 @@ const TrashPage = () => {
       await permanentDeleteFile(id);
       setFiles((prev) => prev.filter((value) => value.id !== id));
       toast.success("Delete Successful");
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
 
   const handleEmptyTrash = async () => {
@@ -65,9 +61,7 @@ const TrashPage = () => {
       await emptyTrash();
       setFiles([]);
       setShowModal(false);
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
 
   const actionBar = (

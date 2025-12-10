@@ -13,7 +13,6 @@ import {
 } from "../services/fileShareService";
 import { checkEmail } from "../services/authService";
 import { useRootContext } from "../pages/Root";
-import { AiFillSwitcher } from "react-icons/ai";
 
 const FileShareModal = ({ onClose, file }) => {
   const { user } = useRootContext();
@@ -34,11 +33,13 @@ const FileShareModal = ({ onClose, file }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await getFileShareInfo(file.id);
-      const url = await getPublicLinkInfo(file.id);
-      const listEmail = data.map((f) => f.sharedEmail);
-      setEmails(listEmail || []);
-      setUrl(url || null);
+      try {
+        const data = await getFileShareInfo(file.id);
+        const url = await getPublicLinkInfo(file.id);
+        const listEmail = data.map((f) => f.sharedEmail);
+        setEmails(listEmail || []);
+        setUrl(url || null);
+      } catch (error) {}
     };
 
     fetchData();
@@ -63,18 +64,20 @@ const FileShareModal = ({ onClose, file }) => {
       return;
     }
 
-    const isValid = await checkEmail(email);
-    if (!isValid) {
-      setEmailErr("Invalid email!!!");
-    } else {
-      setEmailErr("");
-      if (emails.includes(email) || email === "") {
+    try {
+      const isValid = await checkEmail(email);
+      if (!isValid) {
+        setEmailErr("Invalid email!!!");
+      } else {
+        setEmailErr("");
+        if (emails.includes(email) || email === "") {
+          setEmail("");
+          return;
+        }
+        setEmails([...emails, email]);
         setEmail("");
-        return;
       }
-      setEmails([...emails, email]);
-      setEmail("");
-    }
+    } catch (error) {}
   };
 
   // Remove email
@@ -91,63 +94,56 @@ const FileShareModal = ({ onClose, file }) => {
 
   //Share with user
   const shareWithUser = async () => {
-    setIsSharing(true);
-    const request = emails.map((e) => ({ email: e }));
-    if (emails.length > 0 || url) {
-      await updateShareFile(file.id, request)
-        .catch((error) => {
-          console.log(error);
-        })
-        .finally(() => {
-          setIsSharing(false);
-        });
-    } else {
-      await shareFile(file.id, request)
-        .catch((error) => {
-          console.log(error);
-        })
-        .finally(() => {
-          setIsSharing(false);
-        });
+    try {
+      setIsSharing(true);
+      const request = emails.map((e) => ({ email: e }));
+      if (emails.length > 0 || url) {
+        await updateShareFile(file.id, request);
+      } else {
+        await shareFile(file.id, request);
+      }
+    } catch (error) {
+    } finally {
+      setIsSharing(false);
     }
   };
 
   //Share public
   const sharePublic = async () => {
-    setIsSharing(true);
-    const link = await shareFilePublicly(file.id);
-    if (link) {
-      setUrl(link);
+    try {
+      setIsSharing(true);
+      const link = await shareFilePublicly(file.id);
+      if (link) {
+        setUrl(link);
+      }
+    } catch (error) {
+    } finally {
+      setIsSharing(false);
     }
-    setIsSharing(false);
   };
 
   //Remove public link
   const handleRemovePublicShare = async () => {
-    setIsSharing(true);
-    await removePublicLink(url?.id)
-      .then(() => {
-        // onClose();
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    setUrl(null);
-    setIsSharing(false);
+    try {
+      setIsSharing(true);
+      await removePublicLink(url?.id);
+      setUrl(null);
+    } catch (error) {
+    } finally {
+      setIsSharing(false);
+    }
   };
 
   //Remove share
   const handleRemoveShare = async () => {
-    setIsSharing(true);
-    await removeShareFile(file?.id)
-      .then(() => {
-        // onClose();
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    setEmails([]);
-    setIsSharing(false);
+    try {
+      setIsSharing(true);
+      await removeShareFile(file?.id).catch(() => {});
+      setEmails([]);
+    } catch (error) {
+    } finally {
+      setIsSharing(false);
+    }
   };
 
   const actionBar = (

@@ -24,8 +24,7 @@ export const loader = async (request) => {
     const data = await searchFiles(term);
     return { data, term };
   } catch (error) {
-    console.log(error);
-    return error;
+    return { data: [], term };
   }
 };
 
@@ -66,9 +65,7 @@ const SearchPage = () => {
     try {
       await deleteFile(id);
       setFiles((prev) => prev.filter((value) => value.id !== id));
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
 
   const handlePreview = async (file) => {

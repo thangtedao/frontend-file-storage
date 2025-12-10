@@ -15,7 +15,7 @@ export const loader = async () => {
     const data = await getFilesShare();
     return { data };
   } catch (error) {
-    console.log(error);
+    return null;
   }
 };
 

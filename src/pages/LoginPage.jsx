@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Form, NavLink, redirect, useNavigate } from "react-router-dom";
+import { Form, NavLink, useNavigate } from "react-router-dom";
 import { login } from "../services/authService";
 import Button from "../components/Button";
 
@@ -15,7 +15,6 @@ const LoginPage = () => {
       await login(username, password);
       return navigate("/");
     } catch (error) {
-      console.log(error.response?.data?.detail);
       setErrors(error.response?.data?.detail);
     }
   };

@@ -18,9 +18,10 @@ export default function FilePreview({ file, onClose }) {
 
   useEffect(() => {
     async function load() {
-      const url = await getSignedUrl(file.id);
-
-      setDocs([{ uri: url, fileName: file.originalFileName || "Document" }]);
+      try {
+        const url = await getSignedUrl(file.id);
+        setDocs([{ uri: url, fileName: file.originalFileName || "Document" }]);
+      } catch (error) {}
     }
 
     load();

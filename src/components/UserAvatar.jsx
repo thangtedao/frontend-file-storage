@@ -35,14 +35,12 @@ const UserAvatar = () => {
   };
 
   const handleSignOut = async (event) => {
-    event.stopPropagation();
     try {
+      event.stopPropagation();
       await logout();
       localStorage.removeItem("token");
       navigate("/login");
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
 
   return (

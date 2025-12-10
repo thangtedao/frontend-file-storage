@@ -20,8 +20,7 @@ export const loader = async (request) => {
     }
     return data;
   } catch (error) {
-    console.log(error);
-    return error;
+    return null;
   }
 };
 

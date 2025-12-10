@@ -18,7 +18,6 @@ const RegisterPage = () => {
       await register({ username, email, password, confirmPassword });
       navigate("/login");
     } catch (error) {
-      console.log(error);
       setErrors(error.response?.data?.detail);
     }
   };

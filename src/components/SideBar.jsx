@@ -37,15 +37,14 @@ const SideBar = ({ className }) => {
     const file = new FormData();
     file.append("file", event.target.files[0]);
 
-    await uploadFile(file)
-      .catch((err) => {
-        console.log(err);
-      })
-      .finally(() => {
-        setIsUploading(false);
-        navigate("/files");
-        toast.success("Upload Successful");
-      });
+    try {
+      await uploadFile(file);
+      navigate("/files");
+      toast.success("Upload Successful");
+    } catch (error) {
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const links = [

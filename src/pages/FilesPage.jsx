@@ -23,8 +23,7 @@ export const loader = async () => {
     const data = await getFiles();
     return { data };
   } catch (error) {
-    console.log(error);
-    return error;
+    return null;
   }
 };
 
@@ -66,9 +65,7 @@ const FilesPage = () => {
       await deleteFile(id);
       setFiles((prev) => prev.filter((value) => value.id !== id));
       toast.success("Delete Successful");
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
 
   const handlePreview = async (file) => {
